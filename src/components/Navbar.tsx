@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 const Navbar = () => {
   return (
-    <AppBar position="fixed" sx={{ backgroundColor: '#031f39', transition: 'background-color 0.3s' }}>
+    <AppBar position="fixed" sx={{ backgroundColor: '#0b1736', transition: 'background-color 0.3s' }}>
       <Toolbar>
         <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
           <Link href="/">

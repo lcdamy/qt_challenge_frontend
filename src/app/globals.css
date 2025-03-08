@@ -3,6 +3,16 @@
   --font-gentium-plus: 'Gentium Plus', serif;
 }
 
+
+
+html,
 body {
   font-family: var(--font-gentium-plus);
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+  word-spacing: 0.1rem;
+  
 }
+
+
