@@ -3,6 +3,8 @@ import { Gentium_Plus } from "next/font/google";
 import "./globals.css";
 import Navbar from '../components/Navbar';
 import AuthProvider from "@/components/AuthProvider/AuthProvider";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify'
 
 
 
@@ -28,6 +30,7 @@ export default function RootLayout({
         <AuthProvider>
           <Navbar />
           <div style={{ paddingTop: '64px' }}>
+          <ToastContainer />
             {children}
           </div>
         </AuthProvider>

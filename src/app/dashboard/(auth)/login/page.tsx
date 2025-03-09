@@ -35,7 +35,7 @@ function Login() {
       return;
     }
 
-    const result = await signIn("credentials", { redirect: false, email: email.value, password: password.value });
+    const result = await signIn("credentials", { redirect: false, email: email.value, password: password.value, mode: 'login' });
 
     if (result?.error) {
       setError(true);

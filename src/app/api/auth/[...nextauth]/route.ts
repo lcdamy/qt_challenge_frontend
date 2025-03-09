@@ -11,6 +11,7 @@ declare module "next-auth" {
             email?: string;
             name?: string;
             token?: string;
+            image?: string;
         };
     }
 }
@@ -32,21 +33,43 @@ const handler = NextAuth({
             name: "Credentials",
             async authorize(credentials) {
                 try {
-                    const response = await fetch(`${apiUrl}/auth/signin`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ email: credentials?.email, password: credentials?.password }),
-                    });
-                    const data = await response.json();
-                    if (data.success) {
-                        const token_decoded = jwt.decode(data.data.access_token);
-                        const decodedToken = token_decoded as jwt.JwtPayload;
-                        const user = { id: decodedToken?.id || "", email: decodedToken?.email, name: decodedToken?.name, token: data.data.access_token };
-                        return user;
+                    if (credentials && 'mode' in credentials && credentials.mode === 'silent') {
+                        const response1 = await fetch(`${apiUrl}/auth/get-refresh-token`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email: credentials.email }),
+                        });
+                        const data1 = await response1.json();
+                        if (!data1.success) throw new Error("Failed to get refresh token");
+
+                        const refresh_token = data1.data.token;
+                        const response2 = await fetch(`${apiUrl}/auth/refresh-token`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ token: refresh_token }),
+                        });
+                        const data2 = await response2.json();
+                        if (!data2.success) throw new Error("Failed to refresh token");
+
+                        const decodedToken = jwt.decode(data2.data.access_token) as jwt.JwtPayload;
+                        return { id: decodedToken?.id || "", email: decodedToken?.email, name: decodedToken?.name, token: data2.data.access_token };
                     } else {
-                        throw new Error("Invalid credentials");
+                        const response = await fetch(`${apiUrl}/auth/signin`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email: credentials?.email, password: credentials?.password }),
+                        });
+                        const data = await response.json();
+                        if (!data.success) throw new Error("Invalid credentials");
+
+                        const decodedToken = jwt.decode(data.data.access_token) as jwt.JwtPayload;
+                        return { id: decodedToken?.id || "", email: decodedToken?.email, name: decodedToken?.name, token: data.data.access_token };
                     }
                 } catch (error) {
                     console.error('An unexpected error happened:', error);

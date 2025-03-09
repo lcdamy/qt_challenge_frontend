@@ -1,21 +1,30 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
-import { signOut, useSession } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+// import Snackbar from '@mui/material/Snackbar';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 
 const Navbar = () => {
   const { data: session, status } = useSession();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const router = useRouter();
+  const [anchorEl, setAnchorEl] = useState(null);
+  // const [open, setOpen] = useState(false);
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const defaultPassword = process.env.NEXT_PUBLIC_DEFAULT_PASSWORD;
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -23,6 +32,35 @@ const Navbar = () => {
   const handleMenu = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
+
+  useEffect(() => {
+    const registerUser = async () => {
+      if (status === 'authenticated' && session?.user && session.user.image) {
+        try {
+          const response = await fetch(`${apiUrl}/auth/signup`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: session.user.email, username: session.user.name, password: defaultPassword }),
+          });
+          const data = await response.json();
+          if (!data.success) {
+            if (data.message === 'Email already exists' || data.message === 'Username already exists') {
+              await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+              return;
+            }
+          }
+          await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+          console.log('User registered:', data);
+        } catch (error) {
+          console.error('Error registering user:', error);
+        }
+      }
+    };
+
+    registerUser();
+  }, [session, status]);
 
   return (
     <AppBar position="fixed" sx={{ backgroundColor: '#0b1736', transition: 'background-color 0.3s' }}>
@@ -43,7 +81,16 @@ const Navbar = () => {
               <MenuItem onClick={() => { handleClose(); signOut(); }}>Logout</MenuItem>
               <MenuItem component={Link} href="/dashboard">Dashboard</MenuItem>
             </Menu>
+            {/* <Snackbar
+              open={open}
+              autoHideDuration={6000}
+              onClose={() => setOpen(false)}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              message="This account is already registered, you can login with your credentials"
+            /> */}
           </div>
+
+
         )}
         {status === 'unauthenticated' && (
           <Box>
