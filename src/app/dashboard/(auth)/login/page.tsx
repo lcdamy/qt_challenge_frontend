@@ -40,7 +40,7 @@ function Login() {
             id="password"
             autoComplete="current-password"
           />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Sign In </Button>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Sign-In </Button>
 
           <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} sx={{ mt: 1, mb: 1 }} onClick={() => signIn("google")}>  Sign in with Google </Button>
           <Button fullWidth variant="outlined" startIcon={<GitHubIcon />} sx={{ mt: 1, mb: 1 }} onClick={() => signIn("github")}>  Sign in with GitHub </Button>

@@ -1,9 +1,39 @@
-import React from 'react'
+"use client";
+import React, { useState } from 'react'
 import { Button, TextField, Container, Typography, Box } from '@mui/material';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import GoogleIcon from '@mui/icons-material/Google';
+import Link from 'next/link';
 
 function Register() {
+  const [err, setErr] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const name = form.elements.namedItem('name') as HTMLInputElement;
+    const email = form.elements.namedItem('email') as HTMLInputElement;
+    const password = form.elements.namedItem('password') as HTMLInputElement;
+    const re_password = form.elements.namedItem('re_password') as HTMLInputElement;
+    console.log(name.value, email.value, password.value, re_password.value);
+    try {
+      const response = await fetch('http://localhost:3010/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: name.value, email: email.value, password: password.value }),
+      });
+      if (response.ok) {
+        setErr(false);
+        console.log('User created');
+        return;
+      }
+      setErr(true);
+    } catch (error) {
+      console.error('An unexpected error happened:', error);
+      setErr(true);
+    }
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <Box sx={{
@@ -14,9 +44,10 @@ function Register() {
       }}
       >
         <Typography component="h1" variant="h5">
-          Sign in
+          Sign Out
         </Typography>
-        <Box component="form" noValidate sx={{ mt: 1 }}>
+
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"
             required
@@ -51,17 +82,18 @@ function Register() {
             margin="normal"
             required
             fullWidth
-            name="password"
+            name="re_password"
             label="Confirm Password"
             type="password"
-            id="password"
+            id="re_password"
             autoComplete="current-password"
           />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Sign In </Button>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Sign-Out </Button>
+          {err && <Typography variant="body2" color="error">An unexpected error happened</Typography>}
+          <Link href="/dashboard/login" passHref> Login with an existing account</Link>
 
-          <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} sx={{ mt: 1, mb: 1 }} >  Sign in with Google </Button>
-          <Button fullWidth variant="outlined" startIcon={<GitHubIcon />} sx={{ mt: 1, mb: 1 }} >  Sign in with GitHub </Button>
         </Box>
+
       </Box>
     </Container>
   )
