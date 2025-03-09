@@ -1,3 +1,4 @@
+"use client";
 import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -5,10 +6,19 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { Box, Button, Container, IconButton } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-
+import useSWR from 'swr';
+import { useSession } from 'next-auth/react';
 
 
 export default function Dashboard() {
+
+  const session = useSession();
+  console.log(session);
+
+  const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then((res) => res.json());
+  const { data, error, isLoading } = useSWR('https://jsonplaceholder.tyicode.com/posts', fetcher);
+  console.log(data);
+
   return (
     <Container>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
