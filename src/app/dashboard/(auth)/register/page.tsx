@@ -3,9 +3,11 @@ import React, { useState } from 'react'
 import { Button, TextField, Container, Typography, Box } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { registerSchema } from '@/libs/registerValidation';
 
 function Register() {
   const [err, setErr] = useState(false);
+  const [formError, setFormError] = useState('');
   const router = useRouter();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -17,8 +19,10 @@ function Register() {
     const password = form.elements.namedItem('password') as HTMLInputElement;
     const re_password = form.elements.namedItem('re_password') as HTMLInputElement;
 
-    if (password.value !== re_password.value) {
+    const { error } = registerSchema.validate({ username: name.value, email: email.value, password: password.value, confirmPassword: re_password.value });
+    if (error) {
       setErr(true);
+      setFormError(error.message);
       return;
     }
 
@@ -98,7 +102,7 @@ function Register() {
             autoComplete="current-password"
           />
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Sign-Out </Button>
-          {err && <Typography variant="body2" color="error">An unexpected error happened</Typography>}
+          {err && <Typography variant="body2" color="error">{formError}</Typography>}
           <Link href="/dashboard/login" passHref> Login with an existing account</Link>
 
         </Box>

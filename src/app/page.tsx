@@ -5,12 +5,13 @@ import Image from 'next/image';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useSession } from 'next-auth/react';
+import { longUrlSchema } from '@/libs/linkValidation';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -25,8 +26,20 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 const Home = () => {
 
   const [open, setOpen] = React.useState(false);
+  const [myLink, setMyLink] = React.useState('');
+
+  const { data: session, status } = useSession();
 
   const handleClickOpen = () => {
+    const longUrl = (document.getElementById('longUrl') as HTMLInputElement).value;
+    const { error } = longUrlSchema.validate({ longUrl });
+    if (error) {
+      setMyLink(error.message);
+    } else if (status === 'unauthenticated') {
+      setMyLink('You must be logged in to use this feature');
+    } else {
+      setMyLink(longUrl);
+    }
     setOpen(true);
   };
   const handleClose = () => {
@@ -71,6 +84,8 @@ const Home = () => {
               variant="outlined"
               placeholder="Enter your long URL"
               fullWidth
+              name='longUrl'
+              id='longUrl'
               sx={{ marginTop: '20px' }}
             />
             <Button onClick={handleClickOpen} variant='contained' size='large' sx={{ marginTop: '20px', display: 'flex', borderRadius: '10px', backgroundColor: "#0058dd", fontWeight: 300, ':hover': { bgcolor: '#0b1736', color: '#fff' } }}>
@@ -117,7 +132,7 @@ const Home = () => {
           </IconButton>
           <DialogContent dividers sx={{ minWidth: '500px' }}>
             <Typography gutterBottom>
-              My link
+              {myLink}
             </Typography>
           </DialogContent>
           <DialogActions>

@@ -5,6 +5,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import GoogleIcon from '@mui/icons-material/Google';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { loginSchema } from '@/libs/loginValidation';
 
 function Login() {
   const { data: session, status } = useSession();
@@ -27,31 +28,22 @@ function Login() {
     const form = e.currentTarget;
     const email = form.elements.namedItem('email') as HTMLInputElement;
     const password = form.elements.namedItem('password') as HTMLInputElement;
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordMinLength = 6;
-
-    if (!email.value || !password.value) {
-      if (!email.value) setHelperText("Please fill in the email field");
-      if (!password.value) setHelperText("Please fill in the password field");
+    const { error } = loginSchema.validate({ email: email.value, password: password.value });
+    if (error) {
       setError(true);
+      setHelperText(error.message);
       return;
     }
 
-    if (!emailRegex.test(email.value)) {
-      setHelperText("Please enter a valid email address");
+    const result = await signIn("credentials", { redirect: false, email: email.value, password: password.value });
+
+    if (result?.error) {
       setError(true);
-      return;
+      setHelperText(result.error);
+    } else {
+      setError(false);
+      setHelperText('');
     }
-
-    if (password.value.length < passwordMinLength) {
-      setHelperText(`Password must be at least ${passwordMinLength} characters long`);
-      setError(true);
-      return;
-    }
-
-    signIn("credentials", { email: email.value, password: password.value });
-
   };
 
   return (

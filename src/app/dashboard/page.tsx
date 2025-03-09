@@ -7,9 +7,12 @@ import { Box, Button, Container, IconButton, List, ListItem, ListItemButton, Lis
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import useSWR from 'swr';
+import Snackbar from '@mui/material/Snackbar';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
+  const [open, setOpen] = React.useState(false);
+
   const router = useRouter();
   const accessToken = session?.user?.token;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -71,7 +74,10 @@ export default function Dashboard() {
             const labelId = `checkbox-list-label-${index}`;
             return (
               <ListItem key={url.id} secondaryAction={
-                <IconButton edge="end" aria-label="comments">
+                <IconButton edge="end" aria-label="comments" onClick={() => {
+                  navigator.clipboard.writeText(`${apiUrl}/${url.short_code}?utm_source=true`);
+                  setOpen(true);
+                }}>
                   <ContentCopyIcon />
                 </IconButton>
               } disablePadding>
@@ -82,6 +88,13 @@ export default function Dashboard() {
             );
           })}
         </List>
+        <Snackbar
+        open={open}
+        autoHideDuration={1000}
+        onClose={() => setOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        message="Link copied to clipboard"
+      />
       </Box>
     </Container>
   );
