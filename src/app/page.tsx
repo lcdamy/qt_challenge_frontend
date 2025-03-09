@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Container, TextField, Typography } from '@mui/material';
+import { Box, Button, Container, FormHelperText, TextField, Typography } from '@mui/material';
 import React from 'react';
 import Image from 'next/image';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -27,20 +27,48 @@ const Home = () => {
 
   const [open, setOpen] = React.useState(false);
   const [myLink, setMyLink] = React.useState('');
+  const [err, setErr] = React.useState(false);
+  const [myshort_code, setMyShortCode] = React.useState('');
 
   const { data: session, status } = useSession();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const accessToken = session?.user?.token;
 
-  const handleClickOpen = () => {
+  const handleClickOpen = async () => {
     const longUrl = (document.getElementById('longUrl') as HTMLInputElement).value;
     const { error } = longUrlSchema.validate({ longUrl });
     if (error) {
       setMyLink(error.message);
+      setErr(true);
     } else if (status === 'unauthenticated') {
       setMyLink('You must be logged in to use this feature');
+      setErr(true);
     } else {
-      setMyLink(longUrl);
+      try {
+        const response = await fetch(`${apiUrl}/shorten`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ long_url: longUrl }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          setErr(false);
+          setMyLink(`${apiUrl}/${data.data.short_code}`);
+          setOpen(true);
+          setMyShortCode(data.data.short_code);
+          return;
+        } else {
+          setMyLink(data.message);
+        }
+        setErr(true);
+      } catch (error) {
+        console.error('An unexpected error happened:', error);
+        setErr(true);
+      }
     }
-    setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
@@ -91,6 +119,7 @@ const Home = () => {
             <Button onClick={handleClickOpen} variant='contained' size='large' sx={{ marginTop: '20px', display: 'flex', borderRadius: '10px', backgroundColor: "#0058dd", fontWeight: 300, ':hover': { bgcolor: '#0b1736', color: '#fff' } }}>
               Get your link for free <ArrowForwardIcon />
             </Button>
+            {err && <FormHelperText error>{myLink}</FormHelperText>}
           </Box>
           <Box sx={{ marginTop: '20px' }}>
             <Typography variant="h5" component="p" sx={{ fontWeight: 'bold' }}>
@@ -136,7 +165,10 @@ const Home = () => {
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleClose}>
+            <Button autoFocus onClick={() => {
+                  navigator.clipboard.writeText(`${apiUrl}/${myshort_code}?utm_source=true`);
+                  setOpen(true);
+                }}>
               <ContentCopyIcon /> Copy Link
             </Button>
           </DialogActions>

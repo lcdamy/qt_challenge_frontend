@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react'
-import { Button, TextField, Container, Typography, Box } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, FormHelperText } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { registerSchema } from '@/libs/registerValidation';
@@ -40,6 +40,7 @@ function Register() {
         router.push('/dashboard/login');
         return;
       }
+      setFormError(data.message);
       setErr(true);
     } catch (error) {
       console.error('An unexpected error happened:', error);
@@ -102,7 +103,7 @@ function Register() {
             autoComplete="current-password"
           />
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Sign-Out </Button>
-          {err && <Typography variant="body2" color="error">{formError}</Typography>}
+          {err && <FormHelperText error>{formError}</FormHelperText>}
           <Link href="/dashboard/login" passHref> Login with an existing account</Link>
 
         </Box>
