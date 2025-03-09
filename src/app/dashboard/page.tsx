@@ -33,7 +33,20 @@ export default function Dashboard() {
   const { data: urls, error } = useSWR(accessToken ? `${apiUrl}/urls` : null, fetcher);
 
   if (status === "loading" || !urls) {
-    return <p>Loading...</p>;
+    return (<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box sx={{ textAlign: 'center' }}>
+        <Box sx={{ display: 'inline-block', width: 80, height: 80, border: '3px solid #0058dd', borderRadius: '50%', borderTop: '3px solid transparent', animation: 'spin 1s linear infinite' }} />
+        <Typography variant="h6" color="textSecondary" sx={{ marginTop: '20px' }}>
+          Loading...
+        </Typography>
+      </Box>
+      <style jsx global>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+    </Box>);
   }
 
   if (!session || error) {
@@ -89,12 +102,12 @@ export default function Dashboard() {
           })}
         </List>
         <Snackbar
-        open={open}
-        autoHideDuration={1000}
-        onClose={() => setOpen(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        message="Link copied to clipboard"
-      />
+          open={open}
+          autoHideDuration={1000}
+          onClose={() => setOpen(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          message="Link copied to clipboard"
+        />
       </Box>
     </Container>
   );

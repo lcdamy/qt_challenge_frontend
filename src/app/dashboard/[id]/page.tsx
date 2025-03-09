@@ -32,7 +32,9 @@ export default function LinkPage({ params }: { params: { id: string } }) {
         Number of clicks
       </Typography>
       <Typography variant="h1" sx={{ marginTop: '20px', fontWeight: 'bold' }}>
-       {link?.data?.clicks}
+      {error && <Typography variant="h6" color="error">Failed to load data</Typography>}
+      {!link && !error && <Typography variant="h6">Loading...</Typography>}
+      {link?.data?.clicks}
       </Typography>
       <Button variant="contained" color="primary" onClick={() => window.history.back()} sx={{ marginTop: '20px', display: 'flex', cursor: 'pointer', borderRadius: '10px', backgroundColor: "#0058dd", fontWeight: 300, ':hover': { bgcolor: '#0b1736', color: '#fff' } }}>
         Go Back
