@@ -1,43 +1,42 @@
-import { Container, Typography } from '@mui/material';
-import { notFound } from 'next/navigation';
-import React from 'react';
+"use client";
+import { Button, Container, Typography } from '@mui/material';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useLayoutEffect } from 'react';
+import useSWR from 'swr';
 
-// export const metadata = {
-//   title: "QT-Challenge - Link page",
-//   description: "Link page",
-// };
+export default function LinkPage({ params }: { params: { id: string } }) {
 
-export async function generateMeta({ params }: { params: { id: string } }) {
-  const data = await readUrl(params.id);
-  return {
-    title: `QT-Challenge - Link ${data.short_code}`,
-    description: `Link ${data.long_url}`,
-  };
-}
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const accessToken = session?.user?.token;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-async function readUrl(id: string) {
-  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`); 
-  if (!response.ok) {
-    return notFound();
-  }
-  return response.json();
-}
+  useLayoutEffect(() => {
+    if (status === "unauthenticated") {
+      router.push('/dashboard/login');
+    }
+  }, [status, router]);
 
-async function LinkPage({ params }: { params: { id: string } }) {
-  const data = await readUrl(params.id);
+  const fetcher = (url: string) => fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+    }
+  }).then((res) => res.json());
+
+  const { data: link, error } = useSWR(accessToken ? `${apiUrl}/analytics/${params.id}` : null, fetcher);
+
   return (
-    <Container sx={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-      <Typography variant="h3" component="h1" gutterBottom>
-        Link:
-      </Typography>
+    <Container sx={{ marginTop: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
       <Typography variant="h4" gutterBottom>
         Number of clicks
       </Typography>
       <Typography variant="h1" sx={{ marginTop: '20px', fontWeight: 'bold' }}>
-        20
+       {link?.data?.clicks}
       </Typography>
+      <Button variant="contained" color="primary" onClick={() => window.history.back()} sx={{ marginTop: '20px', display: 'flex', cursor: 'pointer', borderRadius: '10px', backgroundColor: "#0058dd", fontWeight: 300, ':hover': { bgcolor: '#0b1736', color: '#fff' } }}>
+        Go Back
+      </Button>
     </Container>
   );
 }
-
-export default LinkPage;

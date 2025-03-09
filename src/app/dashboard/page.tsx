@@ -75,7 +75,7 @@ export default function Dashboard() {
                   <ContentCopyIcon />
                 </IconButton>
               } disablePadding>
-                <ListItemButton role={undefined} dense component="a" href={`dashboard/${url.id}`}>
+                <ListItemButton role={undefined} dense component="a" href={`dashboard/${url.short_code}`}>
                   <ListItemText id={labelId} primary={`${frontendUrl}/${url.short_code}`} />
                 </ListItemButton>
               </ListItem>

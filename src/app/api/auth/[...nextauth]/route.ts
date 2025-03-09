@@ -61,7 +61,6 @@ const handler = NextAuth({
     ],
     callbacks: {
         async redirect({ url, baseUrl }) {
-            console.log(url, baseUrl);
             return url.startsWith(baseUrl) ? url : baseUrl;
         },
         async session({ session, token }) {
