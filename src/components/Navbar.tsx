@@ -6,8 +6,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import { Box } from '@mui/material';
 import Link from 'next/link';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { signOut, useSession } from 'next-auth/react';
 
 const Navbar = () => {
+  const session = useSession();
   return (
     <AppBar position="fixed" sx={{ backgroundColor: '#0b1736', transition: 'background-color 0.3s' }}>
       <Toolbar>
@@ -26,6 +29,12 @@ const Navbar = () => {
           <Button color="inherit" sx={{ marginRight: '20px' }} href="/dashboard">
             Dashboard
           </Button>
+          {session.status === 'authenticated' && (
+            <Button color="inherit" sx={{ marginRight: '20px' }} onClick={() => signOut()}>
+              <LogoutIcon />
+            </Button>
+          )}
+
         </Box>
       </Toolbar>
     </AppBar>

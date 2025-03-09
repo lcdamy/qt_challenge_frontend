@@ -3,10 +3,21 @@ import React from 'react'
 import { Button, TextField, Container, Typography, Box } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import GoogleIcon from '@mui/icons-material/Google';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 function Login() {
 
+  const session = useSession();
+  const router = useRouter();
+
+  if (session.status === "loading") {
+    return <div>Loading...</div>
+  }
+
+  if (session.status === "authenticated") {
+    router.push("/dashboard");
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
