@@ -18,7 +18,7 @@ const handler = NextAuth({
             name: "Credentials",
             async authorize(credentials) {
                 try {
-                    const response = await fetch('http://localhost:3011/auth/signin', {
+                    const response = await fetch(`${process.env.API_URL}/auth/signin`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
