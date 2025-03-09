@@ -2,9 +2,11 @@
 import React, { useState } from 'react'
 import { Button, TextField, Container, Typography, Box } from '@mui/material';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 function Register() {
   const [err, setErr] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -13,18 +15,24 @@ function Register() {
     const email = form.elements.namedItem('email') as HTMLInputElement;
     const password = form.elements.namedItem('password') as HTMLInputElement;
     const re_password = form.elements.namedItem('re_password') as HTMLInputElement;
-    console.log(name.value, email.value, password.value, re_password.value);
+
+    if (password.value !== re_password.value) {
+      setErr(true);
+      return;
+    }
+
     try {
-      const response = await fetch('http://localhost:3010/auth/signup', {
+      const response = await fetch('http://localhost:3011/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: name.value, email: email.value, password: password.value }),
+        body: JSON.stringify({ username: name.value, email: email.value, password: password.value }),
       });
-      if (response.ok) {
+      const data = await response.json();
+      if (data.success) {
         setErr(false);
-        console.log('User created');
+        router.push('/dashboard/login');
         return;
       }
       setErr(true);

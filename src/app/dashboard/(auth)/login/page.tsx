@@ -6,6 +6,22 @@ import GoogleIcon from '@mui/icons-material/Google';
 import { signIn } from 'next-auth/react';
 
 function Login() {
+
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const email = form.elements.namedItem('email') as HTMLInputElement;
+    const password = form.elements.namedItem('password') as HTMLInputElement;
+
+    signIn("credentials", {
+      email: email.value,
+      password: password.value
+    });
+
+  };
+
+
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -19,7 +35,7 @@ function Login() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box component="form" noValidate sx={{ mt: 1 }}>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"
             required
