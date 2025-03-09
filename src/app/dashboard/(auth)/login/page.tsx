@@ -19,7 +19,7 @@ function Login() {
 
   if (status === "authenticated") {
     router.push("/dashboard");
-    return null; // Prevent rendering the login component
+    return null;
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -50,10 +50,8 @@ function Login() {
       return;
     }
 
-    signIn("credentials", {
-      email: email.value,
-      password: password.value
-    });
+    signIn("credentials", { email: email.value, password: password.value });
+
   };
 
   return (

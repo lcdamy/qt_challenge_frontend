@@ -7,13 +7,8 @@ import Button from '@mui/material/Button';
 import { Box, Typography } from '@mui/material';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
-import PersonIcon from '@mui/icons-material/Person';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 
@@ -21,10 +16,7 @@ import Menu from '@mui/material/Menu';
 const Navbar = () => {
   const { data: session, status } = useSession();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [auth, setAuth] = React.useState(true);
-
   const handleClose = () => {
-    console.log('logout');
     setAnchorEl(null);
   };
 
@@ -32,10 +24,7 @@ const Navbar = () => {
     setAnchorEl(event.currentTarget);
   };
 
-
   return (
-
-
     <AppBar position="fixed" sx={{ backgroundColor: '#0b1736', transition: 'background-color 0.3s' }}>
       <Toolbar>
         <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} />
@@ -48,7 +37,7 @@ const Navbar = () => {
           <div>
             <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleMenu} color="inherit" >
               <AccountCircle />
-              <Typography sx={{ marginLeft: '10px' }}> Names goes here </Typography>
+              <Typography sx={{ marginLeft: '10px' }}> {session?.user?.name} </Typography>
             </IconButton>
             <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={Boolean(anchorEl)} onClose={handleClose} >
               <MenuItem onClick={() => { handleClose(); signOut(); }}>Logout</MenuItem>
@@ -56,7 +45,6 @@ const Navbar = () => {
             </Menu>
           </div>
         )}
-
         {status === 'unauthenticated' && (
           <Box>
             <Button color="inherit" sx={{ marginRight: '20px' }} href="/dashboard/login">
@@ -67,8 +55,6 @@ const Navbar = () => {
             </Button>
           </Box>
         )}
-
-
       </Toolbar>
     </AppBar>
   );

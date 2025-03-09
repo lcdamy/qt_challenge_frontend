@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 function Register() {
   const [err, setErr] = useState(false);
   const router = useRouter();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,7 +23,7 @@ function Register() {
     }
 
     try {
-      const response = await fetch(`${process.env.API_URL}/auth/signup`, {
+      const response = await fetch(`${apiUrl}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
