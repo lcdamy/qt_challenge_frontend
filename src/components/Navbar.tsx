@@ -45,19 +45,19 @@ const Navbar = () => {
           const data = await response.json();
           if (!data.success) {
             if (data.message === 'Email already exists' || data.message === 'Username already exists') {
-              const result = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
-              console.log('Result data:', result);
-              if (result && result.error === "Invalid credentials") {
+              const result1 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+              console.log('line 49', result1);
+              if (result1 && result1.error === "Invalid credentials") {
                 toast.error("Oops! It looks like you're already registered with a password. Please log in with your email and password before using Google or GitHub OAuth.", {
                   autoClose: 10000,
                   onClose: () => signOut(),
                 });
               }
-
               return;
             }
           }
-          await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+          const result2 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+          console.log('line 60', result2);
           console.log('User registered:', data);
         } catch (error) {
           console.error('Error registering user:', error);
