@@ -58,7 +58,7 @@ function Register() {
       }}
       >
         <Typography component="h1" variant="h5">
-          Sign Out
+          Create Account
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
