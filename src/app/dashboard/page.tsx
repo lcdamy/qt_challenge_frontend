@@ -62,7 +62,7 @@ export default function Dashboard() {
             <Button href="/" fullWidth variant="contained" sx={{ marginTop: '20px', display: 'flex', cursor: 'pointer', borderRadius: '10px', backgroundColor: "#0058dd", fontWeight: 300, ':hover': { bgcolor: '#0b1736', color: '#fff' } }}>Create your own shorten URL</Button>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '60px' }}>
           <SearchOffIcon sx={{ fontSize: 40, color: 'gray' }} />
           <Typography variant="h6" color="textSecondary">
             No shorten link found
@@ -81,7 +81,7 @@ export default function Dashboard() {
         </Box>
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginTop: '60px' }}>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
           {urls.data.map((url: any, index: number) => {
             const labelId = `checkbox-list-label-${index}`;

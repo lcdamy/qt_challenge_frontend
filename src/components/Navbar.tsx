@@ -11,7 +11,6 @@ import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-// import Snackbar from '@mui/material/Snackbar';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
@@ -20,7 +19,6 @@ const Navbar = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState(null);
-  // const [open, setOpen] = useState(false);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const defaultPassword = process.env.NEXT_PUBLIC_DEFAULT_PASSWORD;
@@ -47,7 +45,15 @@ const Navbar = () => {
           const data = await response.json();
           if (!data.success) {
             if (data.message === 'Email already exists' || data.message === 'Username already exists') {
-              await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+              const result = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+              console.log('Result data:', result);
+              if (result && result.error === "Invalid credentials") {
+                toast.error("Oops! It looks like you're already registered with a password. Please log in with your email and password before using Google or GitHub OAuth.", {
+                  autoClose: 10000,
+                  onClose: () => signOut(),
+                });
+              }
+
               return;
             }
           }
@@ -81,13 +87,6 @@ const Navbar = () => {
               <MenuItem onClick={() => { handleClose(); signOut(); }}>Logout</MenuItem>
               <MenuItem component={Link} href="/dashboard">Dashboard</MenuItem>
             </Menu>
-            {/* <Snackbar
-              open={open}
-              autoHideDuration={6000}
-              onClose={() => setOpen(false)}
-              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-              message="This account is already registered, you can login with your credentials"
-            /> */}
           </div>
 
 
