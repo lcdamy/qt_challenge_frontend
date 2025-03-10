@@ -29,14 +29,11 @@ jobs:
       - name: push docker image to dockerhub
         run: docker push lcdamy/qt-challenge-frontend:1.0
 
-      - name: Deploy to Render
-        uses: JorgeLNJunior/render-deploy@v1.4.5
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20.0.0
         with:
-          service_id: 'srv-cuk74mogph6c73bo5bfg'
-          api_key: 'rnd_deuDq33XwResEJRgxT8qwetQQ8lJ'
-          wait_deploy: true
-          github_deployment: true
-          deployment_environment: 'production'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          clear_cache: true
+          vercel-token: 'E4Nsc3rWU6TjtSoDQXCEWcg8'
+          vercel-org-id: 'VjKHivdNGddhZVmepCek4cbG'
+          vercel-project-id: 'prj_7EIacRdFh8sXlAOlNELCuU0b1EsS'
+          working-directory: ./
 
