@@ -55,7 +55,7 @@ const Navbar = () => {
           }
         }
         } else {
-        const result2 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+        const result2 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'login' });
         console.log('line 59', result2);
         console.log('User registered:', data);
         }
