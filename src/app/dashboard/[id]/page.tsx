@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useLayoutEffect } from 'react';
 import useSWR from 'swr';
 
-export default function LinkPage({ params }: { params: { id: string } }) {
+
+export default function LinkPage({ params }: any) {
 
   const { data: session, status } = useSession();
   const router = useRouter();
