@@ -8,6 +8,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import useSWR from 'swr';
 import Snackbar from '@mui/material/Snackbar';
+import DashboardMenu from '@/components/DashboardMenu';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -24,13 +25,21 @@ export default function Dashboard() {
     }
   }, [status, router]);
 
+  const [page, setPage] = React.useState(1);
+  const pageSize = 20;
+
   const fetcher = (url: string) => fetch(url, {
     headers: {
       'Authorization': `Bearer ${accessToken}`,
     }
   }).then((res) => res.json());
 
-  const { data: urls, error } = useSWR(accessToken ? `${apiUrl}/urls` : null, fetcher);
+  const { data: urls, error } = useSWR(
+    accessToken ? `${apiUrl}/urls?page=${page}&limit=${pageSize}` : null,
+    fetcher
+  );
+
+
 
   if (status === "loading" || !urls) {
     return (<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -56,12 +65,7 @@ export default function Dashboard() {
   if (!urls.success || urls.data.length === 0) {
     return (
       <Container>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1>Shorten links</h1>
-          <Box>
-            <Button href="/" fullWidth variant="contained" sx={{ marginTop: '20px', display: 'flex', cursor: 'pointer', borderRadius: '10px', backgroundColor: "#0058dd", fontWeight: 300, ':hover': { bgcolor: '#0b1736', color: '#fff' } }}>Create your own shorten URL</Button>
-          </Box>
-        </Box>
+        <DashboardMenu />
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
           <SearchOffIcon sx={{ fontSize: 40, color: 'gray' }} />
           <Typography variant="h6" color="textSecondary">
@@ -74,16 +78,10 @@ export default function Dashboard() {
 
   return (
     <Container>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Shorten links</h1>
-        <Box>
-          <Button href="/" fullWidth variant="contained" sx={{ marginTop: '20px', display: 'flex', cursor: 'pointer', borderRadius: '10px', backgroundColor: "#0058dd", fontWeight: 300, ':hover': { bgcolor: '#0b1736', color: '#fff' } }}>Create your own shorten URL</Button>
-        </Box>
-      </Box>
-
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',marginTop: '20px' }}>
+      <DashboardMenu />
+      <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          {urls.data.map((url: any, index: number) => {
+          {urls.data.urls.map((url: any, index: number) => {
             const labelId = `checkbox-list-label-${index}`;
             return (
               <ListItem key={url.id} secondaryAction={
@@ -108,6 +106,28 @@ export default function Dashboard() {
           anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
           message="Link copied to clipboard"
         />
+        {/* Pagination controls */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+          <Button
+            variant="outlined"
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+            sx={{ mr: 1 }}
+          >
+            Previous
+          </Button>
+          <Typography sx={{ alignSelf: 'center', mx: 2 }}>
+            Page {page}
+          </Typography>
+          <Button
+            variant="outlined"
+            onClick={() => setPage((prev) => prev + 1)}
+            disabled={urls.data.urls.length < pageSize}
+            sx={{ ml: 1 }}
+          >
+            Next
+          </Button>
+        </Box>
       </Box>
     </Container>
   );

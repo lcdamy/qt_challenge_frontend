@@ -1,18 +1,26 @@
 "use client";
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography, Box, FormHelperText } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, FormHelperText, InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import GitHubIcon from '@mui/icons-material/GitHub';
 import GoogleIcon from '@mui/icons-material/Google';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { loginSchema } from '@/libs/loginValidation';
 
+
 function Login() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   const [error, setError] = useState(false);
   const [helperText, setHelperText] = useState('');
+
+
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   if (status === "loading") {
     return (<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -89,12 +97,22 @@ function Login() {
             fullWidth
             name="password"
             label="Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             id="password"
             autoComplete="current-password"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleTogglePassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+
           />
           {error && <FormHelperText error>{helperText}</FormHelperText>}
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Sign-In </Button>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Login </Button>
           <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} sx={{ mt: 1, mb: 1 }} onClick={() => signIn("google")}>  Sign in with Google </Button>
           <Button fullWidth variant="outlined" startIcon={<GitHubIcon />} sx={{ mt: 1, mb: 1 }} onClick={() => signIn("github")}>  Sign in with GitHub </Button>
         </Box>

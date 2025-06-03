@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -34,34 +33,34 @@ const Navbar = () => {
   useEffect(() => {
     const registerUser = async () => {
       if (status === 'authenticated' && session?.user && session.user.image) {
-      try {
-        const response = await fetch(`${apiUrl}/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: session.user.email, username: session.user.name, password: defaultPassword }),
-        });
-        const data = await response.json();
-        if (!data.success) {
-        if (data.message === 'Email already exists' || data.message === 'Username already exists') {
-          const result1 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
-          console.log('line 49', result1);
-          if (result1?.error === "Invalid credentials") {
-          toast.error("Oops! It looks like you're already registered with a password. Please log in with your email and password before using Google or GitHub OAuth.", {
-            autoClose: 10000,
-            onClose: () => signOut(),
+        try {
+          const response = await fetch(`${apiUrl}/auth/signup`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: session.user.email, username: session.user.name, password: defaultPassword }),
           });
+          const data = await response.json();
+          if (!data.success) {
+            if (data.message === 'Email already exists' || data.message === 'Username already exists') {
+              const result1 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+              console.log('line 49', result1);
+              if (result1?.error === "Invalid credentials") {
+                toast.error("Oops! It looks like you're already registered with a password. Please log in with your email and password before using Google or GitHub OAuth.", {
+                  autoClose: 10000,
+                  onClose: () => signOut(),
+                });
+              }
+            }
+          } else {
+            const result2 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'login' });
+            console.log('line 59', result2);
+            console.log('User registered:', data);
           }
+        } catch (error) {
+          console.error('Error registering user:', error);
         }
-        } else {
-        const result2 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'login' });
-        console.log('line 59', result2);
-        console.log('User registered:', data);
-        }
-      } catch (error) {
-        console.error('Error registering user:', error);
-      }
       }
     };
 

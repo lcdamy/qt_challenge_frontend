@@ -1,23 +1,18 @@
-import type { Metadata } from "next";
-import { Gentium_Plus } from "next/font/google";
+"use client";
 import "./globals.css";
 import Navbar from '../components/Navbar';
 import AuthProvider from "@/components/AuthProvider/AuthProvider";
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify'
+import { ToastContainer } from 'react-toastify';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 
-
-const gentiumPlus = Gentium_Plus({
-  weight: "400",
-  variable: "--font-gentium-plus",
-  subsets: ["latin"],
+const theme = createTheme({
+  typography: {
+    fontFamily: 'var(--font-concert-one), "Concert One", sans-serif',
+  },
 });
 
-export const metadata: Metadata = {
-  title: "QT-Challenge",
-  description: "QT Frontend Challenge",
-};
 
 export default function RootLayout({
   children,
@@ -26,13 +21,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={gentiumPlus.variable}>
+      <body>
         <AuthProvider>
-          <Navbar />
-          <div style={{ paddingTop: '64px' }}>
-          <ToastContainer />
-            {children}
-          </div>
+          <ThemeProvider theme={theme}>
+            <Navbar />
+            <div style={{ paddingTop: '64px' }}>
+              <ToastContainer />
+              {children}
+            </div>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

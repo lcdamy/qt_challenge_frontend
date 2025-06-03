@@ -1,18 +1,19 @@
 /* src/app/globals.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Concert+One&display=swap');
+
 :root {
-  --font-gentium-plus: 'Gentium Plus', serif;
+  --font-concert-one: 'Concert One', sans-serif;
 }
-
-
 
 html,
 body {
-  font-family: var(--font-gentium-plus);
-  padding: 0;
-  margin: 0;
+  font-family: var(--font-concert-one);
   font-size: 14px;
   word-spacing: 0.1rem;
-  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 

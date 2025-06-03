@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react'
-import { Button, TextField, Container, Typography, Box, FormHelperText } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, FormHelperText, InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { registerSchema } from '@/libs/registerValidation';
@@ -8,6 +9,8 @@ import { registerSchema } from '@/libs/registerValidation';
 function Register() {
   const [err, setErr] = useState(false);
   const [formError, setFormError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
   const router = useRouter();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -47,6 +50,14 @@ function Register() {
       setErr(true);
     }
   };
+
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+  const handleTogglePassword2 = () => {
+    setShowPassword2((prev) => !prev);
+  };
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -88,9 +99,18 @@ function Register() {
             fullWidth
             name="password"
             label="Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             id="password"
             autoComplete="current-password"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleTogglePassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             margin="normal"
@@ -98,11 +118,20 @@ function Register() {
             fullWidth
             name="re_password"
             label="Confirm Password"
-            type="password"
-            id="re_password"
+            type={showPassword2 ? "text" : "password"}
+            id="password2"
             autoComplete="current-password"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleTogglePassword2} edge="end">
+                    {showPassword2 ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Sign-Out </Button>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}> Register </Button>
           {err && <FormHelperText error>{formError}</FormHelperText>}
           <Link href="/dashboard/login" passHref> Login with an existing account</Link>
 
