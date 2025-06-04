@@ -62,7 +62,7 @@ export default function Dashboard() {
     return null;
   }
 
-  if (!urls.success || urls.data.length === 0) {
+  if (!urls.success || urls.data.urls.length === 0) {
     return (
       <Container>
         <DashboardMenu />

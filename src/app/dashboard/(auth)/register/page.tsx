@@ -35,7 +35,7 @@ function Register() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username: name.value, email: email.value, password: password.value }),
+        body: JSON.stringify({ username: name.value, email: email.value, password: password.value, signupWithSocial: false }),
       });
       const data = await response.json();
       if (data.success) {

@@ -39,24 +39,20 @@ const Navbar = () => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email: session.user.email, username: session.user.name, password: defaultPassword }),
+            body: JSON.stringify({ email: session.user.email, username: session.user.name, password: defaultPassword, signupWithSocial: true }),
           });
           const data = await response.json();
           if (!data.success) {
-            if (data.message === 'Email already exists' || data.message === 'Username already exists') {
-              const result1 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
-              console.log('line 49', result1);
-              if (result1?.error === "Invalid credentials") {
-                toast.error("Oops! It looks like you're already registered with a password. Please log in with your email and password before using Google or GitHub OAuth.", {
-                  autoClose: 10000,
-                  onClose: () => signOut(),
-                });
-              }
-            }
+            toast.error("Oops! something went wrong!", {
+              autoClose: 10000,
+              onClose: () => signOut(),
+            });
           } else {
-            const result2 = await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'login' });
-            console.log('line 59', result2);
-            console.log('User registered:', data);
+            if (data.data.mode === 'silent') {
+              await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'silent' });
+            } else {
+              await signIn("credentials", { redirect: false, email: session.user.email, password: defaultPassword, mode: 'login' });
+            }
           }
         } catch (error) {
           console.error('Error registering user:', error);
